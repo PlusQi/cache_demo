@@ -30,8 +30,8 @@ public class DoubleCache extends AbstractValueAdaptingCache {
         super(allowNullValues);
     }
 
-    public DoubleCache(boolean allowNullValues, String cacheName, RedisTemplate<Object, Object> redisTemplate, Cache<Object, Object> caffeineCache, DoubleCacheConfig doubleCacheConfig) {
-        super(allowNullValues);
+    public DoubleCache(String cacheName, RedisTemplate<Object, Object> redisTemplate, Cache<Object, Object> caffeineCache, DoubleCacheConfig doubleCacheConfig) {
+        super(doubleCacheConfig.getAllowNull());
         this.cacheName = cacheName;
         this.redisTemplate = redisTemplate;
         this.caffeineCache = caffeineCache;
