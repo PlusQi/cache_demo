@@ -46,7 +46,7 @@ public class DoubleCacheManager implements CacheManager {
 
     @Override
     public Collection<String> getCacheNames() {
-        return null;
+        return cacheMap.keySet();
     }
 
     /**
