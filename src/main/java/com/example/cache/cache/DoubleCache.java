@@ -1,9 +1,8 @@
-package com.example.cache.common;
+package com.example.cache.cache;
 
 import com.example.cache.config.DoubleCacheConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -79,12 +78,14 @@ public class DoubleCache extends AbstractValueAdaptingCache {
         reentrantLock.lock();
         try {
             Object cacheValue = lookup(key);
+            log.debug("已获取缓存：{}", cacheValue);
             if (Objects.nonNull(cacheValue)) {
                 return (T) cacheValue;
             }
 
             // 未查询到key对应的缓存
             cacheValue = callable.call();
+            log.debug("通过Callable.call()获取缓存：{}", cacheValue);
             put(key, cacheValue);
             return (T) cacheValue;
         } catch (Exception e) {

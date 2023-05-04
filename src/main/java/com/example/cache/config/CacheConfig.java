@@ -1,6 +1,6 @@
 package com.example.cache.config;
 
-import com.example.cache.service.impl.DoubleCacheManager;
+import com.example.cache.cache.impl.DoubleCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

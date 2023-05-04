@@ -1,6 +1,5 @@
-package com.example.cache.service;
+package com.example.cache.cache;
 
-import com.example.cache.common.DoubleCache;
 import org.springframework.cache.Cache;
 
 import java.util.Collection;

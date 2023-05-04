@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @TableName("area_info")
-public class AreaInfo {
+public class AreaInfo implements Serializable {
 
     // 地区层级
     public final static int AREA_LEVEL_PROVINCE = 1; // 省

@@ -1,12 +1,14 @@
-package com.example.cache.service.impl;
+package com.example.cache.cache.impl;
 
-import com.example.cache.common.DoubleCache;
+
+import com.example.cache.cache.DoubleCache;
 import com.example.cache.config.DoubleCacheConfig;
-import com.example.cache.service.CacheManager;
+import com.example.cache.cache.CacheManager;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import jdk.nashorn.internal.ir.CallNode;
+
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * 自定义缓存管理器
  * @author PlusQi
  */
+@Component
 public class DoubleCacheManager implements CacheManager {
     Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
     private RedisTemplate<Object, Object> redisTemplate;

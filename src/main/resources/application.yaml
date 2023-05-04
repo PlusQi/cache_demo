@@ -15,5 +15,7 @@ doublecache:
     allowNull: true
     init: 128
     max: 1024
-    caffeineExpire: 5 # Caffeine缓存过期时间
-    redisExpire: 10 # redis缓存过期时间
+    caffeineExpire: 300 # Caffeine缓存过期时间
+    redisExpire: 600 # redis缓存过期时间
+
+

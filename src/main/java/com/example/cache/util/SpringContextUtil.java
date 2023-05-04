@@ -1,4 +1,4 @@
-package com.example.cache.common;
+package com.example.cache.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
