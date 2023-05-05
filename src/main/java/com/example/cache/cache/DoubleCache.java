@@ -1,11 +1,16 @@
 package com.example.cache.cache;
 
+import com.example.cache.config.CacheMsgConfig;
 import com.example.cache.config.DoubleCacheConfig;
+import com.example.cache.msg.CacheMessage;
+import com.example.cache.util.CommonUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -122,6 +127,19 @@ public class DoubleCache extends AbstractValueAdaptingCache {
         // 存入Redis，并设置缓存过期时间(配置类已设置默认值)
         redisExpireOpt.ifPresent(redisExpire -> this.redisTemplate.opsForValue().set(redisKey, toStoreValue(value), redisExpire, TimeUnit.SECONDS));
 
+
+        /*
+        * 适应分布式环境的改造，增加redis消息推送，通知其他节点更新一级缓存
+        * */
+        CacheMessage cacheMessage;
+        try {
+            cacheMessage = new CacheMessage(this.cacheName, key, value, CacheMessage.CacheMsgType.UPDATE, CommonUtil.getLocalAddress());
+        } catch (UnknownHostException e) {
+            log.error("获取本机ip及端口号失败，无法推送消息：{}", e.getMessage());
+            return;
+        }
+
+        redisTemplate.convertAndSend(CacheMsgConfig.TOPIC, cacheMessage);
     }
 
     @Override
@@ -136,6 +154,19 @@ public class DoubleCache extends AbstractValueAdaptingCache {
     public void evict(Object key) {
         this.redisTemplate.delete(this.cacheName + ":" + key);
         caffeineCache.invalidate(key);
+
+        /*
+         * 适应分布式环境的改造，增加redis消息推送，通知其他节点删除一级缓存
+         * */
+        CacheMessage cacheMessage;
+        try {
+            cacheMessage = new CacheMessage(this.cacheName, key, null, CacheMessage.CacheMsgType.DELETE, CommonUtil.getLocalAddress());
+        } catch (UnknownHostException e) {
+            log.error("获取本机ip及端口号失败，无法推送消息：{}", e.getMessage());
+            return;
+        }
+
+        redisTemplate.convertAndSend(CacheMsgConfig.TOPIC, cacheMessage);
     }
 
     /**
@@ -149,5 +180,22 @@ public class DoubleCache extends AbstractValueAdaptingCache {
         }
 
         caffeineCache.invalidateAll();
+    }
+
+    /**
+     * 更新一级缓存
+     * @param key 待更新的缓存key
+     * @param value 待更新的缓存value
+     */
+    public void updateL1Cache(Object key, Object value) {
+        caffeineCache.put(key, value);
+    }
+
+    /**
+     * 删除一级缓存
+     * @param key 待删除的缓存key
+     */
+    public void evictL1Cache(Object key) {
+        caffeineCache.invalidate(key);
     }
 }
